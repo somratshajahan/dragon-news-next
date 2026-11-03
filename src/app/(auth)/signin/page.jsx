@@ -1,13 +1,29 @@
 "use client";
+import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 
 const SigninPage = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
 
-  const handleSignin = (data) => {
-    console.log(data);
+  const handleSignin = async (formData) => {
+    console.log(formData);
+    const {name, email, password, photoUrl} = formData;
     // Handle signin logic here
+    const {data, error} = await authClient.signUp.email({
+      name: name,
+      email: email,
+      password: password,
+      image: photoUrl,
+      callbackUrl: "/login"
+    });
+    if(error){
+      alert(error.message);
+    }
+    if(data){
+      alert("Sign up successful! Please check your email to verify your account.");
+    }
+    console.log("Sign up response:", data, error);
   };
   return (
     <div className=" pt-10 container mx-auto min-h-[80vh] bg-slate-100 flex justify-center items-center">
@@ -83,16 +99,23 @@ const SigninPage = () => {
                 <div className="mt-1">
                  
                   <label className="label">
-                    <input
+                    <input {...register("terms", {
+                      required: { value: true, message: "You must accept the terms and conditions" },
+                    })}
                       type="checkbox"
                       
                       className="checkbox"
                     />
                   Accept terms and conditions
                   </label>
+                    {errors.terms && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.terms.message}
+                  </p>
+                )}
                 </div>
 
-                <button className="btn btn-neutral mt-4 w-full">Login</button>
+                <button className="btn btn-neutral mt-4 w-full">Register</button>
 
                 <p className="text-center mt-3 text-sm">
                   Do you have an account?{" "}
