@@ -23,6 +23,7 @@ const Header = () => {
         <Image
           className="mt-10"
           src={logo}
+          
           height={200}
           width={300}
           alt="logo"
